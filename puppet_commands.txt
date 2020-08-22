@@ -1,0 +1,54 @@
+#Installing Puppet Master:
+sudo apt update
+sudo apt upgrade
+wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+sudo dpkg -i puppet6-release-bionic.deb
+sudo apt update
+sudo apt install puppetserver
+#Setting up your own CA.
+/opt/puppetlabs/bin/puppetserver ca setup
+sudo service puppetserver start
+sudo service puppetserver status
+Echo ‘PATH=$PATH:/opt/puppetlabs/bin’ >> ~/.bashrc
+source ~/.bashrc
+Puppet --version
+#Forchecking host name:
+facter -p | grep hostname
+#For checking fqdn:
+facter -p | grep fqdn
+#Installing Puppet Agent:
+sudo apt update
+sudo apt upgrade
+wget https://apt.puppetlabs.com/puppet6-release-bionic.deb
+sudo dpkg -i puppet6-release-bionic.deb
+sudo apt update
+sudo apt install puppet-agent
+#Configuring Puppet Master and Puppet Agent:
+#Puppet Master
+vi /etc/puppetlabs/ puppet /puppet.conf 
+autosign=true
+sudo service puppetserver start
+#Puppet Agent:
+puppet agent –test –server fqdn
+#Puppet Master:
+cd /etc/ puppetlabs/code/environments/production/manifests/
+vi init.pp
+#Add the following code in init.pp
+class testagent{
+file{ “tmp/test.txt”:
+      mode => “0644”,
+      owner => ‘root’,
+      group => ‘root’,
+      content => “Hello World”
+      }
+}
+vi site.pp
+#Add the following code in site.pp
+ node default {
+      include testagent
+}
+#Puppet Agent:
+puppet agent –test –server fqdn
+#View the content of the file test.txt and it should contain Hello World.
+Cat /tmp / test.txt.
+
